@@ -537,6 +537,265 @@ pre {
   color: var(--muted);
 }
 
+.sql-emergency,
+.sql-toolbar,
+.final-sql-checklist {
+  margin-bottom: 18px;
+  padding: 18px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.sql-emergency h3,
+.final-sql-checklist h3 {
+  margin: 0 0 14px;
+  font-size: 24px;
+}
+
+.emergency-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px 22px;
+  margin: 0;
+  padding-left: 22px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.sql-toolbar {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.sql-search {
+  display: grid;
+  gap: 7px;
+  width: min(100%, 720px);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.sql-search input {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  color: var(--text);
+  background: var(--panel-3);
+  border: 1px solid #45494f;
+  border-radius: 7px;
+  outline: none;
+}
+
+.sql-search input:focus {
+  border-color: var(--accent);
+}
+
+.sql-count {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.sql-statements-layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.sql-toc {
+  position: sticky;
+  top: 104px;
+  max-height: calc(100vh - 128px);
+  overflow: auto;
+  padding: 14px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.sql-toc h3 {
+  margin: 0 0 12px;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.sql-toc a {
+  display: block;
+  padding: 7px 8px;
+  color: var(--muted);
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.sql-toc a:hover,
+.sql-toc a:focus-visible {
+  color: var(--text);
+  background: var(--panel-2);
+  outline: none;
+}
+
+.sql-section-stack {
+  display: grid;
+  gap: 14px;
+}
+
+.sql-lab-section {
+  scroll-margin-top: 96px;
+  overflow: clip;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.sql-lab-section[open] {
+  border-color: rgba(130, 169, 160, 0.45);
+}
+
+.sql-lab-section > summary {
+  position: sticky;
+  top: 79px;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 20px;
+  list-style: none;
+  cursor: pointer;
+  background: var(--panel);
+  border-bottom: 1px solid transparent;
+}
+
+.sql-lab-section[open] > summary {
+  border-bottom-color: var(--line);
+}
+
+.sql-lab-section > summary::-webkit-details-marker {
+  display: none;
+}
+
+.sql-lab-body {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+}
+
+.sql-entry-card {
+  padding: 18px;
+  background: var(--panel-3);
+  border: 1px solid #3d4146;
+  border-radius: 8px;
+}
+
+.sql-entry-card[hidden],
+.sql-lab-section[hidden] {
+  display: none;
+}
+
+.sql-topic {
+  margin: 0 0 6px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.sql-entry-card h4 {
+  margin: 0 0 12px;
+  color: var(--text);
+  font-size: 20px;
+  line-height: 1.3;
+}
+
+.sql-line {
+  margin: 10px 0;
+  color: var(--muted);
+}
+
+.sql-line strong {
+  color: var(--text);
+}
+
+.statement-code {
+  margin: 12px 0;
+  border: 1px solid #3a3e43;
+  border-radius: 8px;
+  overflow: clip;
+  background: var(--code-bg);
+}
+
+.statement-code-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 12px;
+  color: var(--accent);
+  background: #202326;
+  border-bottom: 1px solid #363a3e;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.statement-code pre {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+.copy-code {
+  min-height: 30px;
+  padding: 4px 9px;
+  color: var(--text);
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.copy-code:hover,
+.copy-code:focus-visible {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.final-sql-checklist {
+  margin-top: 18px;
+}
+
+.checklist-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 16px;
+}
+
+.checklist-item {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  color: var(--muted);
+}
+
+.checklist-item input {
+  width: 18px;
+  height: 18px;
+  margin-top: 4px;
+  accent-color: var(--accent);
+}
+
 .error-card,
 .loading-card {
   max-width: 760px;
@@ -885,18 +1144,21 @@ pre {
   }
 
   .study-layout,
+  .sql-statements-layout,
   .quiz-layout {
     grid-template-columns: 1fr;
   }
 
   .subnav,
+  .sql-toc,
   .quiz-controls,
   .quiz-stats {
     position: static;
     max-height: none;
   }
 
-  .subnav {
+  .subnav,
+  .sql-toc {
     display: flex;
     gap: 8px;
     overflow-x: auto;
@@ -905,30 +1167,44 @@ pre {
     -webkit-overflow-scrolling: touch;
   }
 
-  .subnav::-webkit-scrollbar {
+  .subnav::-webkit-scrollbar,
+  .sql-toc::-webkit-scrollbar {
     display: none;
   }
 
-  .subnav h3 {
+  .subnav h3,
+  .sql-toc h3 {
     flex: 0 0 auto;
     margin: 0;
     padding: 7px 4px;
   }
 
-  .subnav a {
+  .subnav a,
+  .sql-toc a {
     flex: 0 0 190px;
     padding: 8px 10px;
     background: var(--panel-3);
     border: 1px solid #3d4146;
   }
 
-  details.study-section {
+  details.study-section,
+  .sql-lab-section {
     scroll-margin-top: 16px;
   }
 
-  details.study-section > summary {
+  details.study-section > summary,
+  .sql-lab-section > summary {
     position: static;
     padding: 15px;
+  }
+
+  .sql-toolbar {
+    display: grid;
+    align-items: stretch;
+  }
+
+  .emergency-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .summary-title {
@@ -936,8 +1212,10 @@ pre {
   }
 
   .section-body,
+  .sql-lab-body,
   .content-card,
-  .chapter-slide {
+  .chapter-slide,
+  .sql-entry-card {
     padding: 14px;
   }
 
@@ -1004,11 +1282,14 @@ pre {
 
   .study-layout,
   .section-stack,
+  .sql-statements-layout,
+  .sql-section-stack,
   .quiz-layout {
     gap: 12px;
   }
 
-  .subnav a {
+  .subnav a,
+  .sql-toc a {
     flex-basis: 165px;
     font-size: 13px;
   }
@@ -1018,8 +1299,24 @@ pre {
   }
 
   .content-card h4,
-  .chapter-slide h4 {
+  .chapter-slide h4,
+  .sql-entry-card h4 {
     font-size: 16px;
+  }
+
+  .sql-emergency,
+  .sql-toolbar,
+  .final-sql-checklist {
+    padding: 14px;
+  }
+
+  .emergency-list,
+  .checklist-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .statement-code-top {
+    padding: 8px 10px;
   }
 
   pre {
