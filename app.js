@@ -28,6 +28,7 @@ const QUESTION_TYPES = [
   "Multiple Choice",
   "True / False",
   "Fill in the Blank",
+  "write-code",
   "SQL Output / Interpretation",
   "Normalization",
   "ER Mapping"
@@ -366,18 +367,20 @@ function buildCuratedQuizBank(categoryMap) {
     ...extras
   });
 
-  return [
+  return normalizeLabQuizBank([
     q("Lab1", "create-table-purpose", "Easy", "Multiple Choice", "What is the purpose of CREATE TABLE?", "To create a table with listed columns and constraints.", "The lab uses CREATE TABLE to define new tables such as emp_tbl, dept, and Student.", {
       choices: ["To create a table with listed columns and constraints.", "To permanently save a transaction.", "To sort query output.", "To remove duplicate rows."]
     }),
-    q("Lab1", "desc-purpose", "Easy", "Fill in the Blank", "The SQL*Plus command used to display a table structure is ____.", "DESC", "The lab shows DESC(RIBE) table_name and DESCRIBE dept for table structure.", {
-      acceptableAnswers: ["DESC", "DESCRIBE", "desc", "describe"]
+    q("Lab1", "desc-purpose", "Easy", "Multiple Choice", "Which SQL*Plus command displays a table structure?", "DESC", "The lab shows DESC(RIBE) table_name and DESCRIBE dept for table structure.", {
+      choices: ["DESC", "COMMIT", "RENAME", "ROLLBACK"]
     }),
-    q("Lab1", "alter-add", "Medium", "SQL Output / Interpretation", "What does this command do?", "It adds the Collage column to Student.", "ALTER TABLE with ADD adds a new column or constraint.", {
+    q("Lab1", "alter-add", "Medium", "Multiple Choice", "What does this command do?", "It adds the Collage column to Student.", "ALTER TABLE with ADD adds a new column or constraint.", {
       sql: "ALTER TABLE Student ADD Collage VARCHAR2(20);",
       choices: ["It adds the Collage column to Student.", "It drops the Student table.", "It inserts one Student row.", "It displays the Student table structure."]
     }),
-    q("Lab1", "drop-table", "Medium", "True / False", "DROP TABLE deletes both the table data and structure, and the statement cannot be rolled back.", true, "The lab notes state that all data and structure are deleted and you cannot roll back this statement."),
+    q("Lab1", "drop-table", "Medium", "Multiple Choice", "Which statement about DROP TABLE matches the lab notes?", "It deletes both table data and structure and cannot be rolled back.", "The lab notes state that all data and structure are deleted and you cannot roll back this statement.", {
+      choices: ["It deletes both table data and structure and cannot be rolled back.", "It deletes rows but keeps the table structure.", "It only displays a table structure.", "It always waits for a COMMIT before taking effect."]
+    }),
     q("Lab1", "rename", "Easy", "Multiple Choice", "Which command changes the name of a table, view, sequence, or synonym?", "RENAME", "The lab uses RENAME dept TO department and notes that the owner can rename database objects.", {
       choices: ["RENAME", "ROLLBACK", "HAVING", "DISTINCT"]
     }),
@@ -391,12 +394,12 @@ function buildCuratedQuizBank(categoryMap) {
     q("Lab2", "foreign-key", "Medium", "Multiple Choice", "What does the FOREIGN KEY constraint on emp.deptno require?", "The referenced department number must exist in dept.", "The lab creates emp_deptno_fk referencing dept(deptno).", {
       choices: ["The referenced department number must exist in dept.", "The employee name must be uppercase.", "The salary must be greater than commission.", "The row must be committed immediately."]
     }),
-    q("Lab2", "check-range", "Easy", "SQL Output / Interpretation", "What condition is enforced by this CHECK constraint?", "deptno must be between 10 and 99.", "The lab shows CHECK (deptno BETWEEN 10 AND 99).", {
+    q("Lab2", "check-range", "Easy", "Multiple Choice", "What condition is enforced by this CHECK constraint?", "deptno must be between 10 and 99.", "The lab shows CHECK (deptno BETWEEN 10 AND 99).", {
       sql: "CHECK (deptno BETWEEN 10 AND 99)",
       choices: ["deptno must be between 10 and 99.", "deptno must be null.", "deptno must reference empno.", "deptno must be sorted descending."]
     }),
-    q("Lab2", "alter-add-constraint", "Medium", "Fill in the Blank", "ALTER TABLE can add or drop a constraint, but not ____ a constraint.", "MODIFY", "The lab notes say constraints can be added or dropped, but not modified.", {
-      acceptableAnswers: ["MODIFY", "modify"]
+    q("Lab2", "alter-add-constraint", "Medium", "Multiple Choice", "ALTER TABLE can add or drop a constraint, but cannot do which operation to a constraint?", "MODIFY", "The lab notes say constraints can be added or dropped, but not modified.", {
+      choices: ["MODIFY", "ADD", "DROP", "ENABLE"]
     }),
     q("Lab2", "disable-cascade", "Hard", "Multiple Choice", "Why is CASCADE used when disabling a constraint?", "To disable dependent integrity constraints as well.", "The lab notes apply CASCADE to disable dependent integrity constraints.", {
       choices: ["To disable dependent integrity constraints as well.", "To sort rows in descending order.", "To force all rows to be deleted.", "To convert character data to dates."]
@@ -411,97 +414,119 @@ function buildCuratedQuizBank(categoryMap) {
     q("Lab3", "implicit-null", "Medium", "Multiple Choice", "How can an INSERT statement insert a null value implicitly?", "By omitting the column from the column list.", "The lab distinguishes implicit null insertion by omitting the column and explicit insertion with NULL.", {
       choices: ["By omitting the column from the column list.", "By using ORDER BY.", "By using DISTINCT.", "By adding a CHECK constraint."]
     }),
-    q("Lab3", "sysdate", "Easy", "Fill in the Blank", "The function used in the lab to record the current date and time is ____.", "SYSDATE", "The lab notes that SYSDATE records the current date and time.", {
-      acceptableAnswers: ["SYSDATE", "sysdate"]
+    q("Lab3", "sysdate", "Easy", "Multiple Choice", "Which function records the current date and time in the lab INSERT example?", "SYSDATE", "The lab notes that SYSDATE records the current date and time.", {
+      choices: ["SYSDATE", "TO_DATE", "NVL", "LOWER"]
     }),
-    q("Lab3", "update-where", "Hard", "True / False", "If an UPDATE statement omits the WHERE clause, all rows in the table are modified.", true, "The lab states that all rows are modified if WHERE is omitted."),
-    q("Lab3", "delete-where", "Medium", "True / False", "If a DELETE statement omits the WHERE clause, all rows in the table are deleted.", true, "The lab notes that specific rows are deleted with WHERE; all rows are deleted if WHERE is omitted."),
-    q("Lab3", "commit", "Easy", "Fill in the Blank", "The command used to permanently save pending transaction changes is ____.", "COMMIT", "The lab shows COMMIT and describes it as permanently saving pending transaction changes.", {
-      acceptableAnswers: ["COMMIT", "commit"]
+    q("Lab3", "update-where", "Hard", "Multiple Choice", "What happens if an UPDATE statement omits the WHERE clause?", "All rows in the table are modified.", "The lab states that all rows are modified if WHERE is omitted.", {
+      choices: ["All rows in the table are modified.", "No rows can be modified.", "Only one row is modified.", "The command becomes a SELECT statement."]
+    }),
+    q("Lab3", "delete-where", "Medium", "Multiple Choice", "What happens if a DELETE statement omits the WHERE clause?", "All rows in the table are deleted.", "The lab notes that specific rows are deleted with WHERE; all rows are deleted if WHERE is omitted.", {
+      choices: ["All rows in the table are deleted.", "Only null rows are deleted.", "The table structure is dropped.", "The command is rolled back automatically."]
+    }),
+    q("Lab3", "commit", "Easy", "Multiple Choice", "Which command permanently saves pending transaction changes?", "COMMIT", "The lab shows COMMIT and describes it as permanently saving pending transaction changes.", {
+      choices: ["COMMIT", "ROLLBACK", "DELETE", "UPDATE"]
     }),
     q("Lab3", "rollback", "Medium", "Multiple Choice", "Which command discards pending changes and restores the previous state of the data?", "ROLLBACK", "The lab says ROLLBACK undoes pending changes, restores the previous state, and releases locks.", {
       choices: ["ROLLBACK", "COMMIT", "RENAME", "DESC"]
     }),
 
-    q("Lab4", "select-all", "Easy", "SQL Output / Interpretation", "What does this query retrieve?", "All columns from dept.", "SELECT * retrieves all columns from the listed table.", {
+    q("Lab4", "select-all", "Easy", "Multiple Choice", "What does this query retrieve?", "All columns from dept.", "SELECT * retrieves all columns from the listed table.", {
       sql: "SELECT *\nFROM dept;",
       choices: ["All columns from dept.", "Only distinct department numbers.", "The structure of dept.", "Grouped salary totals."]
     }),
-    q("Lab4", "distinct", "Easy", "Fill in the Blank", "The keyword used to eliminate duplicate rows in a SELECT result is ____.", "DISTINCT", "The lab uses SELECT DISTINCT deptno to eliminate duplicate rows.", {
-      acceptableAnswers: ["DISTINCT", "distinct"]
+    q("Lab4", "distinct", "Easy", "Multiple Choice", "Which keyword eliminates duplicate rows in a SELECT result?", "DISTINCT", "The lab uses SELECT DISTINCT deptno to eliminate duplicate rows.", {
+      choices: ["DISTINCT", "WHERE", "ORDER BY", "GROUP BY"]
     }),
-    q("Lab4", "null-arithmetic", "Hard", "True / False", "An arithmetic expression that contains a null value evaluates to null.", true, "The lab states that arithmetic expressions containing a null value evaluate to null."),
+    q("Lab4", "null-arithmetic", "Hard", "Multiple Choice", "What happens to an arithmetic expression that contains a null value?", "It evaluates to null.", "The lab states that arithmetic expressions containing a null value evaluate to null.", {
+      choices: ["It evaluates to null.", "It evaluates to zero.", "It ignores the null value.", "It always raises a primary key error."]
+    }),
     q("Lab4", "alias-quotes", "Medium", "Multiple Choice", "Why are double quotes used around an alias such as \"Annual Salary\"?", "To preserve the alias as a multiword heading.", "The lab shows sal*12 \"Annual Salary\" as a column alias.", {
       choices: ["To preserve the alias as a multiword heading.", "To force a group function.", "To make the column NOT NULL.", "To create a foreign key."]
     }),
-    q("Lab4", "concatenation", "Easy", "Fill in the Blank", "The operator used in the lab to concatenate character strings is ____.", "||", "The lab uses ename||job and ename ||' is a '||job for concatenation.", {
-      acceptableAnswers: ["||"]
+    q("Lab4", "concatenation", "Easy", "Multiple Choice", "Which operator concatenates character strings in the lab examples?", "||", "The lab uses ename||job and ename ||' is a '||job for concatenation.", {
+      choices: ["||", "+", "%", "_"]
     }),
 
     q("Lab5", "where-clause", "Easy", "Multiple Choice", "Which clause restricts the rows returned by a SELECT statement?", "WHERE", "The lab states that rows are restricted by using the WHERE clause after FROM.", {
       choices: ["WHERE", "GROUP BY", "HAVING", "DESC"]
     }),
-    q("Lab5", "strings-dates", "Medium", "True / False", "Character strings and date values are enclosed in single quotation marks.", true, "The lab states that character strings and date values are enclosed in single quotation marks."),
+    q("Lab5", "strings-dates", "Medium", "Multiple Choice", "How are character strings and date values written in WHERE conditions?", "Inside single quotation marks.", "The lab states that character strings and date values are enclosed in single quotation marks.", {
+      choices: ["Inside single quotation marks.", "Inside square brackets.", "Without any punctuation.", "Only inside double quotation marks."]
+    }),
     q("Lab5", "between", "Easy", "Multiple Choice", "What does BETWEEN test?", "Whether a value is within a range.", "The lab uses BETWEEN 1000 AND 1500 to display rows based on a range.", {
       choices: ["Whether a value is within a range.", "Whether a value is null.", "Whether a value is in uppercase.", "Whether duplicate rows should be removed."]
     }),
     q("Lab5", "in-list", "Easy", "Multiple Choice", "What does the IN operator test?", "Whether a value is found in a list.", "The lab uses mgr IN (7902, 7566, 7788).", {
       choices: ["Whether a value is found in a list.", "Whether a pattern has one character.", "Whether a group should be filtered.", "Whether a table should be renamed."]
     }),
-    q("Lab5", "like-percent", "Medium", "Fill in the Blank", "In a LIKE pattern, ____ denotes zero or many characters.", "%", "The lab states that % denotes zero or many characters and _ denotes one character.", {
-      acceptableAnswers: ["%"]
+    q("Lab5", "like-percent", "Medium", "Multiple Choice", "In a LIKE pattern, which symbol denotes zero or many characters?", "%", "The lab states that % denotes zero or many characters and _ denotes one character.", {
+      choices: ["%", "_", "||", "(+)"]
     }),
     q("Lab5", "is-null", "Medium", "Multiple Choice", "Which operator tests for null values?", "IS NULL", "The lab uses WHERE mgr IS NULL to find rows with null manager values.", {
       choices: ["IS NULL", "IN", "BETWEEN", "DISTINCT"]
     }),
-    q("Lab5", "precedence-parentheses", "Hard", "True / False", "Parentheses can be used to force priority in logical conditions.", true, "The lab contrasts conditions with and without parentheses and notes that parentheses force priority."),
+    q("Lab5", "precedence-parentheses", "Hard", "Multiple Choice", "What do parentheses do in logical WHERE conditions?", "They force priority.", "The lab contrasts conditions with and without parentheses and notes that parentheses force priority.", {
+      choices: ["They force priority.", "They remove duplicate rows.", "They create a table alias.", "They commit the transaction."]
+    }),
 
-    q("Lab6", "equijoin", "Medium", "SQL Output / Interpretation", "What is the join condition in this query?", "emp.deptno=dept.deptno", "The lab retrieves records with equijoins by matching department numbers from emp and dept.", {
+    q("Lab6", "equijoin", "Medium", "Multiple Choice", "What is the join condition in this query?", "emp.deptno=dept.deptno", "The lab retrieves records with equijoins by matching department numbers from emp and dept.", {
       sql: "SELECT emp.empno, emp.ename, emp.deptno,\n       dept.deptno, dept.loc\nFROM emp, dept\nWHERE emp.deptno=dept.deptno;",
       choices: ["emp.deptno=dept.deptno", "emp.empno=dept.deptno", "dept.loc=emp.ename", "emp.sal BETWEEN deptno AND loc"]
     }),
     q("Lab6", "table-alias", "Easy", "Multiple Choice", "Why does the lab use table aliases such as e and d?", "To simplify queries.", "The lab notes that table aliases simplify queries.", {
       choices: ["To simplify queries.", "To create new tables.", "To disable constraints.", "To force null values."]
     }),
-    q("Lab6", "nonequijoin", "Hard", "SQL Output / Interpretation", "What kind of join is shown by matching salary between low and high salary limits?", "A non-equijoin.", "The lab retrieves records with non-equijoins by using BETWEEN s.losal AND s.hisal.", {
+    q("Lab6", "nonequijoin", "Hard", "Multiple Choice", "What kind of join is shown by matching salary between low and high salary limits?", "A non-equijoin.", "The lab retrieves records with non-equijoins by using BETWEEN s.losal AND s.hisal.", {
       sql: "SELECT e.ename, e.sal, s.grade\nFROM emp e, salgrade s\nWHERE e.sal\nBETWEEN s.losal AND s.hisal;",
       choices: ["A non-equijoin.", "A self join.", "A primary key constraint.", "A rollback operation."]
     }),
     q("Lab6", "outer-join-purpose", "Medium", "Multiple Choice", "Why use an outer join?", "To also see rows that do not usually meet the join condition.", "The lab states that an outer join shows rows that do not usually meet the join condition.", {
       choices: ["To also see rows that do not usually meet the join condition.", "To remove duplicate rows.", "To make a column NOT NULL.", "To save a transaction."]
     }),
-    q("Lab6", "outer-join-symbol", "Easy", "Fill in the Blank", "The Oracle outer join operator shown in the lab is ____.", "(+)", "The lab states that the outer join operator is the plus sign (+).", {
-      acceptableAnswers: ["(+)", "+"]
+    q("Lab6", "outer-join-symbol", "Easy", "Multiple Choice", "Which Oracle outer join operator is shown in the lab?", "(+)", "The lab states that the outer join operator is the plus sign (+).", {
+      choices: ["(+)", "%", "_", "||"]
     }),
     q("Lab6", "self-join", "Medium", "Multiple Choice", "What does a self join do in the lab example?", "It joins emp to itself to show worker-manager relationships.", "The lab uses emp worker and emp manager with worker.mgr = manager.empno.", {
       choices: ["It joins emp to itself to show worker-manager relationships.", "It joins emp to dept using loc.", "It disables dependent constraints.", "It displays table structure."]
     }),
-    q("Lab6", "join-syntax", "Easy", "Fill in the Blank", "In the lab join syntax, the join condition belongs in the ____ clause.", "WHERE", "The lab shows joins with WHERE table1.column1 = table2.column2.", {
-      acceptableAnswers: ["WHERE", "where"]
+    q("Lab6", "join-syntax", "Easy", "Multiple Choice", "In the lab join syntax, where does the join condition belong?", "WHERE", "The lab shows joins with WHERE table1.column1 = table2.column2.", {
+      choices: ["WHERE", "HAVING", "GROUP BY", "ORDER BY"]
     }),
-    q("Lab6", "outer-join-trap", "Hard", "True / False", "The lab's outer join operator is written in the WHERE clause, not as a separate JOIN keyword.", true, "The lab uses the Oracle (+) outer join syntax in WHERE conditions."),
+    q("Lab6", "outer-join-trap", "Hard", "Multiple Choice", "Where is the lab's Oracle outer join operator written?", "In the WHERE clause.", "The lab uses the Oracle (+) outer join syntax in WHERE conditions.", {
+      choices: ["In the WHERE clause.", "In a COMMIT statement.", "Inside GROUP BY only.", "Only after ORDER BY."]
+    }),
 
     q("Lab7", "avg-sum", "Easy", "Multiple Choice", "Which group functions does the lab say are used for numeric data?", "AVG and SUM", "The lab notes that AVG and SUM can be used for numeric data.", {
       choices: ["AVG and SUM", "CONCAT and INSTR", "DESC and RENAME", "COMMIT and ROLLBACK"]
     }),
-    q("Lab7", "min-max", "Easy", "True / False", "MIN and MAX can be used for any datatype.", true, "The lab states that MIN and MAX can be used for any datatype."),
+    q("Lab7", "min-max", "Easy", "Multiple Choice", "Which statement about MIN and MAX matches the lab?", "MIN and MAX can be used for any datatype.", "The lab states that MIN and MAX can be used for any datatype.", {
+      choices: ["MIN and MAX can be used for any datatype.", "MIN and MAX only work with dates.", "MIN and MAX require a WHERE clause.", "MIN and MAX cannot ignore nulls."]
+    }),
     q("Lab7", "count-star", "Medium", "Multiple Choice", "What does COUNT(*) return?", "The number of rows in a table.", "The lab states that COUNT(*) returns the number of rows in a table.", {
       choices: ["The number of rows in a table.", "The number of nonnull values in one expression only.", "The maximum salary.", "The current date and time."]
     }),
     q("Lab7", "count-expr", "Medium", "Multiple Choice", "What does COUNT(expr) return?", "The number of nonnull rows for that expression.", "The lab states that COUNT(expr) returns the number of nonnull rows.", {
       choices: ["The number of nonnull rows for that expression.", "All rows including null values.", "The average including every null automatically.", "The number of tables owned by the user."]
     }),
-    q("Lab7", "group-null", "Hard", "True / False", "Group functions ignore null values in the column.", true, "The lab states that group functions ignore null values."),
+    q("Lab7", "group-null", "Hard", "Multiple Choice", "How do group functions treat null values in a column?", "They ignore null values.", "The lab states that group functions ignore null values.", {
+      choices: ["They ignore null values.", "They convert every null to 1.", "They always return null.", "They raise a foreign key error."]
+    }),
     q("Lab7", "nvl-aggregate", "Hard", "Multiple Choice", "Why use NVL with a group function?", "To force the group function to include null values as a replacement value.", "The lab says NVL forces group functions to include null values.", {
       choices: ["To force the group function to include null values as a replacement value.", "To create a table alias.", "To filter groups after GROUP BY.", "To disable a constraint."]
     }),
-    q("Lab7", "group-by-rule", "Hard", "True / False", "Every selected column that is not inside a group function must appear in the GROUP BY clause.", true, "The lab warns that non-aggregate SELECT expressions must be in GROUP BY."),
-    q("Lab7", "having", "Medium", "Fill in the Blank", "The ____ clause restricts groups after GROUP BY.", "HAVING", "The lab says WHERE cannot restrict groups; HAVING restricts groups.", {
-      acceptableAnswers: ["HAVING", "having"]
+    q("Lab7", "group-by-rule", "Hard", "Multiple Choice", "Which GROUP BY rule matches the lab?", "Every selected column that is not inside a group function must appear in GROUP BY.", "The lab warns that non-aggregate SELECT expressions must be in GROUP BY.", {
+      choices: ["Every selected column that is not inside a group function must appear in GROUP BY.", "Every selected column must be inside COUNT(*).", "GROUP BY must always come before WHERE.", "GROUP BY cannot use department numbers."]
     }),
-    q("Lab7", "where-aggregate", "Hard", "True / False", "The WHERE clause can be used to restrict groups with AVG(sal) > 2000.", false, "The lab shows this as illegal and says HAVING is used to restrict groups."),
+    q("Lab7", "having", "Medium", "Multiple Choice", "Which clause restricts groups after GROUP BY?", "HAVING", "The lab says WHERE cannot restrict groups; HAVING restricts groups.", {
+      choices: ["HAVING", "WHERE", "ORDER BY", "SELECT"]
+    }),
+    q("Lab7", "where-aggregate", "Hard", "Multiple Choice", "Which clause should restrict groups with AVG(sal) > 2000?", "HAVING", "The lab shows WHERE with AVG(sal) > 2000 as illegal and says HAVING is used to restrict groups.", {
+      choices: ["HAVING", "WHERE", "DISTINCT", "DESC"]
+    }),
 
-    q("Lab8", "subquery-parentheses", "Easy", "True / False", "The lab syntax encloses a subquery in parentheses.", true, "The lab shows the inner SELECT inside parentheses."),
+    q("Lab8", "subquery-parentheses", "Easy", "Multiple Choice", "How is a subquery enclosed in the lab syntax?", "In parentheses.", "The lab shows the inner SELECT inside parentheses.", {
+      choices: ["In parentheses.", "In square brackets.", "After COMMIT.", "Only inside double quotes."]
+    }),
     q("Lab8", "inner-first", "Medium", "Multiple Choice", "When a query uses a subquery in the WHERE clause, which query executes first according to the lab?", "The subquery executes first.", "The lab states that the inner query executes once before the main query.", {
       choices: ["The subquery executes first.", "The outer query executes first.", "Both queries are ignored.", "The HAVING clause always executes last."]
     }),
@@ -514,40 +539,101 @@ function buildCuratedQuizBank(categoryMap) {
     q("Lab8", "all-meaning", "Hard", "Multiple Choice", "For the ALL operator, what does > ALL mean in the lab notes?", "More than the MAX.", "The lab notes say > ALL is more than the MAX and < ALL is less than the MIN.", {
       choices: ["More than the MAX.", "More than the MIN.", "Less than the MAX.", "Equivalent to IN."]
     }),
-    q("Lab8", "eq-any", "Medium", "Fill in the Blank", "According to the lab notes, = ANY is equivalent to ____.", "IN", "The lab notes say = ANY is equivalent to IN.", {
-      acceptableAnswers: ["IN", "in"]
+    q("Lab8", "eq-any", "Medium", "Multiple Choice", "According to the lab notes, = ANY is equivalent to which operator?", "IN", "The lab notes say = ANY is equivalent to IN.", {
+      choices: ["IN", "LIKE", "BETWEEN", "IS NULL"]
     }),
-    q("Lab8", "insert-subquery", "Medium", "SQL Output / Interpretation", "Why does this INSERT statement not use VALUES?", "It copies rows returned by a subquery.", "The lab says INSERT with a subquery copies rows from another table and does not use VALUES.", {
+    q("Lab8", "insert-subquery", "Medium", "Multiple Choice", "Why does this INSERT statement not use VALUES?", "It copies rows returned by a subquery.", "The lab says INSERT with a subquery copies rows from another table and does not use VALUES.", {
       sql: "INSERT INTO managers(id, name, salary, hiredate)\nSELECT empno, ename, sal, hiredate\nFROM emp\nWHERE job = 'MANAGER';",
       choices: ["It copies rows returned by a subquery.", "It creates a CHECK constraint.", "It disables dependent constraints.", "It filters grouped results."]
     }),
     q("Lab8", "delete-subquery", "Medium", "Multiple Choice", "What can a subquery do in a DELETE statement?", "Remove rows based on values from another table.", "The lab deletes employee rows where deptno is returned by a subquery against dept.", {
       choices: ["Remove rows based on values from another table.", "Create a table with a primary key.", "Display table structure.", "Sort rows by hiredate."]
     }),
-    q("Lab8", "subquery-no-values", "Easy", "True / False", "Subqueries are useful when a query is based on unknown values.", true, "The lab summary states that subqueries are useful when a query is based on unknown values."),
+    q("Lab8", "subquery-no-values", "Easy", "Multiple Choice", "When are subqueries useful according to the lab summary?", "When a query is based on unknown values.", "The lab summary states that subqueries are useful when a query is based on unknown values.", {
+      choices: ["When a query is based on unknown values.", "Only when creating a CHECK constraint.", "Only after every COMMIT.", "When displaying table structure only."]
+    }),
 
-    q("Lab9", "case-conversion", "Medium", "SQL Output / Interpretation", "Why does this condition find BLAKE when the literal is lowercase?", "UPPER converts the literal to uppercase for comparison.", "The lab uses UPPER('blake') to match ename values stored as uppercase.", {
+    q("Lab9", "case-conversion", "Medium", "Multiple Choice", "Why does this condition find BLAKE when the literal is lowercase?", "UPPER converts the literal to uppercase for comparison.", "The lab uses UPPER('blake') to match ename values stored as uppercase.", {
       sql: "SELECT empno, ename, deptno\nFROM emp\nWHERE ename = UPPER('blake');",
       choices: ["UPPER converts the literal to uppercase for comparison.", "LOWER converts ename to lowercase.", "NVL replaces null names.", "COUNT ignores null values."]
     }),
-    q("Lab9", "case-sensitive", "Hard", "True / False", "The lab shows that comparing ename to 'blake' directly returns no rows.", true, "The lab first queries ename = 'blake' and shows no rows selected."),
+    q("Lab9", "case-sensitive", "Hard", "Multiple Choice", "What happens when the lab compares ename directly to lowercase 'blake'?", "No rows are selected.", "The lab first queries ename = 'blake' and shows no rows selected.", {
+      choices: ["No rows are selected.", "Every employee is selected.", "The row is inserted.", "The table is dropped."]
+    }),
     q("Lab9", "concat", "Easy", "Multiple Choice", "What does CONCAT(ename, job) do in the lab's character function query?", "Combines employee name and job into one value.", "The lab output shows values such as MARTINSALESMAN.", {
       choices: ["Combines employee name and job into one value.", "Counts employee rows.", "Finds the minimum hiredate.", "Changes null commission to zero."]
     }),
-    q("Lab9", "length", "Easy", "Fill in the Blank", "The character function that returns the length of ename in the lab query is ____.", "LENGTH", "The lab selects LENGTH(ename) with character manipulation functions.", {
-      acceptableAnswers: ["LENGTH", "length"]
+    q("Lab9", "length", "Easy", "Multiple Choice", "Which character function returns the length of ename in the lab query?", "LENGTH", "The lab selects LENGTH(ename) with character manipulation functions.", {
+      choices: ["LENGTH", "INSTR", "CONCAT", "SUBSTR"]
     }),
     q("Lab9", "instr", "Medium", "Multiple Choice", "What does INSTR(ename, 'A') report in the lab output?", "The position of A in the employee name.", "The lab lists INSTR(ENAME,'A') values such as 2 for MARTIN and 0 for TURNER.", {
       choices: ["The position of A in the employee name.", "The number of employee rows.", "The department location.", "The average commission."]
     }),
-    q("Lab9", "nvl", "Medium", "SQL Output / Interpretation", "Why is NVL(comm,0) used in this annual compensation expression?", "It replaces null commission with 0 before arithmetic.", "The lab uses NVL so null commission does not make the arithmetic result null.", {
+    q("Lab9", "nvl", "Medium", "Multiple Choice", "Why is NVL(comm,0) used in this annual compensation expression?", "It replaces null commission with 0 before arithmetic.", "The lab uses NVL so null commission does not make the arithmetic result null.", {
       sql: "SELECT ename, sal, comm, (sal*12)+NVL(comm,0)\nFROM emp;",
       choices: ["It replaces null commission with 0 before arithmetic.", "It groups rows by commission.", "It removes duplicate commissions.", "It converts salaries to dates."]
     }),
     q("Lab9", "substr-filter", "Medium", "Multiple Choice", "What kind of rows does SUBSTR(job,1,5) = 'SALES' select in the lab note?", "Rows where the first five job characters are SALES.", "The lab note uses SUBSTR(job,1,5) = 'SALES' with SALESMAN rows.", {
       choices: ["Rows where the first five job characters are SALES.", "Rows with null jobs.", "Rows grouped by job.", "Rows sorted by job length."]
     }),
-    q("Lab9", "nvl-arithmetic", "Hard", "True / False", "Using NVL(comm,0) prevents a null commission from making the salary arithmetic expression null.", true, "The lab demonstrates NVL in (sal*12)+NVL(comm,0)."),
+    q("Lab9", "nvl-arithmetic", "Hard", "Multiple Choice", "What does NVL(comm,0) prevent in salary arithmetic?", "A null commission making the whole expression null.", "The lab demonstrates NVL in (sal*12)+NVL(comm,0).", {
+      choices: ["A null commission making the whole expression null.", "A salary being sorted descending.", "A row being inserted into emp.", "A group being filtered by HAVING."]
+    }),
+
+    q("Lab1", "code-create-dept", "Medium", "write-code", "Write a CREATE TABLE statement for dept with deptno NUMBER(2), dname VARCHAR2(14), and loc VARCHAR2(13).", "CREATE TABLE dept (deptno NUMBER(2), dname VARCHAR2(14), loc VARCHAR2(13));", "CREATE TABLE defines the table name followed by column names and datatypes.", {
+      expectedAnswer: "CREATE TABLE dept (deptno NUMBER(2), dname VARCHAR2(14), loc VARCHAR2(13));"
+    }),
+    q("Lab1", "code-alter-add", "Medium", "write-code", "Write the SQL statement to add a Collage VARCHAR2(20) column to the Student table.", "ALTER TABLE Student ADD Collage VARCHAR2(20);", "ALTER TABLE with ADD adds a new column to an existing table.", {
+      expectedAnswer: "ALTER TABLE Student ADD Collage VARCHAR2(20);"
+    }),
+    q("Lab2", "code-foreign-key", "Hard", "write-code", "Write the constraint clause that makes emp.deptno reference dept(deptno).", "CONSTRAINT emp_deptno_fk FOREIGN KEY (deptno) REFERENCES dept (deptno);", "A FOREIGN KEY constraint points a column in the child table to the referenced key in the parent table.", {
+      expectedAnswer: "CONSTRAINT emp_deptno_fk FOREIGN KEY (deptno) REFERENCES dept (deptno);"
+    }),
+    q("Lab2", "code-check-range", "Medium", "write-code", "Write a CHECK constraint named emp_deptno_ck that only allows deptno values between 10 and 99.", "CONSTRAINT emp_deptno_ck CHECK (deptno BETWEEN 10 AND 99);", "CHECK enforces a condition that each row must satisfy.", {
+      expectedAnswer: "CONSTRAINT emp_deptno_ck CHECK (deptno BETWEEN 10 AND 99);"
+    }),
+    q("Lab3", "code-insert-dept", "Medium", "write-code", "Write an INSERT statement that adds department 50 named DEVELOPMENT in DETROIT to dept.", "INSERT INTO dept (deptno, dname, loc) VALUES (50, 'DEVELOPMENT', 'DETROIT');", "INSERT INTO names the target table, optional columns, and the VALUES to store in the new row.", {
+      expectedAnswer: "INSERT INTO dept (deptno, dname, loc) VALUES (50, 'DEVELOPMENT', 'DETROIT');"
+    }),
+    q("Lab3", "code-update-emp", "Medium", "write-code", "Write an UPDATE statement that changes employee 7782 to department 20.", "UPDATE emp SET deptno = 20 WHERE empno = 7782;", "The WHERE clause limits the UPDATE to the specific employee row.", {
+      expectedAnswer: "UPDATE emp SET deptno = 20 WHERE empno = 7782;"
+    }),
+    q("Lab4", "code-select-dept", "Easy", "write-code", "Write a SELECT statement to display all columns from dept.", "SELECT * FROM dept;", "SELECT * retrieves all columns from the specified table.", {
+      expectedAnswer: "SELECT * FROM dept;"
+    }),
+    q("Lab4", "code-alias-annual", "Medium", "write-code", "Write a query that displays ename as Name and sal*12 as \"Annual Salary\" from emp.", "SELECT ename AS Name, sal*12 \"Annual Salary\" FROM emp;", "Column aliases rename output headings; double quotes preserve the multiword alias.", {
+      expectedAnswer: "SELECT ename AS Name, sal*12 \"Annual Salary\" FROM emp;"
+    }),
+    q("Lab5", "code-clerk-filter", "Medium", "write-code", "Write a SQL query to display employee names and jobs from emp where the job is CLERK.", "SELECT ename, job FROM emp WHERE job = 'CLERK';", "The WHERE clause restricts rows to employees whose job value is CLERK.", {
+      expectedAnswer: "SELECT ename, job FROM emp WHERE job = 'CLERK';"
+    }),
+    q("Lab5", "code-order-salary", "Medium", "write-code", "Write a query that displays ename and sal from emp ordered by salary descending.", "SELECT ename, sal FROM emp ORDER BY sal DESC;", "ORDER BY sal DESC sorts the result from highest salary to lowest salary.", {
+      expectedAnswer: "SELECT ename, sal FROM emp ORDER BY sal DESC;"
+    }),
+    q("Lab6", "code-equijoin", "Hard", "write-code", "Write a join query that displays employee name and department location by matching emp.deptno to dept.deptno.", "SELECT emp.ename, dept.loc FROM emp, dept WHERE emp.deptno = dept.deptno;", "The equijoin condition matches rows where the department numbers are equal.", {
+      expectedAnswer: "SELECT emp.ename, dept.loc FROM emp, dept WHERE emp.deptno = dept.deptno;"
+    }),
+    q("Lab6", "code-self-join", "Hard", "write-code", "Write a self join that displays each worker name and their manager name from emp.", "SELECT worker.ename, manager.ename FROM emp worker, emp manager WHERE worker.mgr = manager.empno;", "A self join uses two aliases for the same table, then matches worker.mgr to manager.empno.", {
+      expectedAnswer: "SELECT worker.ename, manager.ename FROM emp worker, emp manager WHERE worker.mgr = manager.empno;"
+    }),
+    q("Lab7", "code-group-by", "Medium", "write-code", "Write a query that displays deptno and average salary from emp for each department.", "SELECT deptno, AVG(sal) FROM emp GROUP BY deptno;", "GROUP BY creates one salary average per department number.", {
+      expectedAnswer: "SELECT deptno, AVG(sal) FROM emp GROUP BY deptno;"
+    }),
+    q("Lab7", "code-having", "Hard", "write-code", "Write a query that displays deptno and average salary for departments whose average salary is greater than 2000.", "SELECT deptno, AVG(sal) FROM emp GROUP BY deptno HAVING AVG(sal) > 2000;", "HAVING filters groups after GROUP BY has calculated each average.", {
+      expectedAnswer: "SELECT deptno, AVG(sal) FROM emp GROUP BY deptno HAVING AVG(sal) > 2000;"
+    }),
+    q("Lab8", "code-subquery-salary", "Hard", "write-code", "Write a subquery to find employees who earn more than employee 7566.", "SELECT ename, sal FROM emp WHERE sal > (SELECT sal FROM emp WHERE empno = 7566);", "The inner query finds employee 7566's salary; the outer query compares other salaries to it.", {
+      expectedAnswer: "SELECT ename, sal FROM emp WHERE sal > (SELECT sal FROM emp WHERE empno = 7566);"
+    }),
+    q("Lab8", "code-in-subquery", "Hard", "write-code", "Write a DELETE statement that removes employees whose deptno belongs to departments located in DALLAS.", "DELETE FROM emp WHERE deptno IN (SELECT deptno FROM dept WHERE loc = 'DALLAS');", "The subquery finds department numbers for DALLAS, and DELETE removes matching employee rows.", {
+      expectedAnswer: "DELETE FROM emp WHERE deptno IN (SELECT deptno FROM dept WHERE loc = 'DALLAS');"
+    }),
+    q("Lab9", "code-upper-filter", "Medium", "write-code", "Write a query that finds BLAKE by comparing ename to UPPER('blake').", "SELECT empno, ename, deptno FROM emp WHERE ename = UPPER('blake');", "UPPER converts the literal to uppercase so it can match uppercase stored names.", {
+      expectedAnswer: "SELECT empno, ename, deptno FROM emp WHERE ename = UPPER('blake');"
+    }),
+    q("Lab9", "code-nvl-comp", "Medium", "write-code", "Write a query that displays ename, sal, comm, and annual compensation using NVL(comm,0).", "SELECT ename, sal, comm, (sal*12)+NVL(comm,0) FROM emp;", "NVL(comm,0) prevents null commission from making the arithmetic result null.", {
+      expectedAnswer: "SELECT ename, sal, comm, (sal*12)+NVL(comm,0) FROM emp;"
+    }),
 
     q("Ch01", "database", "Easy", "Multiple Choice", "What is a database?", "A collection of related data.", "The chapter defines a database as a collection of related data.", {
       choices: ["A collection of related data.", "Only a software package.", "A single SQL query.", "A report generated by an application."]
@@ -704,7 +790,59 @@ function buildCuratedQuizBank(categoryMap) {
     q("Ch14", "when-not-bcnf", "Hard", "Normalization", "Why might a design return to 3NF instead of decomposing to BCNF?", "A BCNF decomposition may lose a functional dependency.", "The chapter example notes returning to 3NF when BCNF decomposition would lose an FD.", {
       choices: ["A BCNF decomposition may lose a functional dependency.", "3NF is always stronger than BCNF.", "BCNF requires null values.", "BCNF removes all candidate keys."]
     })
-  ];
+  ]);
+}
+
+function normalizeLabQuizBank(questions) {
+  return questions.map((question) => {
+    if (!/^Lab[1-9]$/.test(question.sourceId) || question.type === "write-code" || question.type === "Multiple Choice") {
+      return question;
+    }
+
+    if (Array.isArray(question.choices)) {
+      return {
+        ...question,
+        type: "Multiple Choice"
+      };
+    }
+
+    if (typeof question.answer === "boolean") {
+      const answer = question.answer ? "True" : "False";
+      return {
+        ...question,
+        type: "Multiple Choice",
+        answer,
+        choices: ["True", "False"]
+      };
+    }
+
+    return {
+      ...question,
+      type: "Multiple Choice",
+      choices: labDistractorChoices(question.answer),
+      acceptableAnswers: undefined
+    };
+  });
+}
+
+function labDistractorChoices(answer) {
+  const specificDistractors = {
+    DESC: ["COMMIT", "RENAME", "ROLLBACK"],
+    MODIFY: ["ADD", "DROP", "ENABLE"],
+    SYSDATE: ["TO_DATE", "NVL", "LOWER"],
+    COMMIT: ["ROLLBACK", "DELETE", "UPDATE"],
+    DISTINCT: ["WHERE", "ORDER BY", "GROUP BY"],
+    "||": ["+", "%", "_"],
+    "%": ["_", "||", "(+)"],
+    "(+)": ["%", "_", "||"],
+    WHERE: ["HAVING", "GROUP BY", "ORDER BY"],
+    HAVING: ["WHERE", "ORDER BY", "SELECT"],
+    IN: ["LIKE", "BETWEEN", "IS NULL"],
+    LENGTH: ["INSTR", "CONCAT", "SUBSTR"]
+  };
+  const correct = formatAnswer(answer);
+  const distractors = specificDistractors[correct] || ["WHERE", "GROUP BY", "ORDER BY"];
+  return [correct, ...distractors].filter((choice, index, choices) => choices.indexOf(choice) === index).slice(0, 4);
 }
 
 function renderQuizPage() {
@@ -815,13 +953,23 @@ function renderAnswerInput(question) {
       state.quiz.selectedAnswer = input.value;
     });
     wrap.append(input);
+  } else if (question.type === "write-code") {
+    const textarea = element("textarea", "code-answer-input");
+    textarea.rows = 8;
+    textarea.value = state.quiz.selectedAnswer;
+    textarea.placeholder = "Write your SQL here";
+    textarea.disabled = state.quiz.submitted;
+    textarea.addEventListener("input", () => {
+      state.quiz.selectedAnswer = textarea.value;
+    });
+    wrap.append(textarea);
   } else {
-    question.choices.forEach((choice) => wrap.append(answerButton(choice, choice)));
+    question.choices.forEach((choice, index) => wrap.append(answerButton(choice, choice, index)));
   }
 
-  const submit = element("button", "quiz-button primary", "Submit Answer");
+  const submit = element("button", "quiz-button primary", question.type === "write-code" ? "Show / Check Answer" : "Submit Answer");
   submit.type = "button";
-  submit.disabled = state.quiz.submitted || (question.type !== "Fill in the Blank" && !hasSelectedAnswer());
+  submit.disabled = state.quiz.submitted || (question.type !== "Fill in the Blank" && question.type !== "write-code" && !hasSelectedAnswer());
   submit.addEventListener("click", submitAnswer);
   const next = element("button", "quiz-button", isLastQuestion() ? "Finish Quiz" : "Next Question");
   next.type = "button";
@@ -833,10 +981,16 @@ function renderAnswerInput(question) {
   return wrap;
 }
 
-function answerButton(value, text) {
-  const button = element("button", `answer-choice ${state.quiz.selectedAnswer === value ? "is-selected" : ""}`, text);
+function answerButton(value, text, optionIndex = null) {
+  const button = element("button", `answer-choice ${state.quiz.selectedAnswer === value ? "is-selected" : ""}`);
   button.type = "button";
   button.disabled = state.quiz.submitted;
+  if (optionIndex === null) {
+    button.textContent = text;
+  } else {
+    button.append(element("span", "answer-letter", `${String.fromCharCode(65 + optionIndex)}.`));
+    button.append(element("span", "answer-text", text));
+  }
   button.addEventListener("click", () => {
     state.quiz.selectedAnswer = value;
     refreshQuiz();
@@ -849,10 +1003,19 @@ function renderFeedback(question) {
   if (!state.quiz.submitted) {
     return area;
   }
+  if (question.type === "write-code") {
+    area.classList.add(state.quiz.lastCorrect ? "is-correct" : "is-review");
+    area.append(element("h4", "", state.quiz.lastCorrect ? "Matches expected answer" : "Compare your answer"));
+    area.append(element("p", "", "Expected answer:"));
+    area.append(renderCode(expectedAnswerFor(question)));
+    area.append(element("p", "", question.explanation));
+    return area;
+  }
+
   area.classList.add(state.quiz.lastCorrect ? "is-correct" : "is-wrong");
   area.append(element("h4", "", state.quiz.lastCorrect ? "Correct" : "Not quite"));
   if (!state.quiz.lastCorrect) {
-    area.append(element("p", "", `Correct answer: ${formatAnswer(question.answer)}`));
+    area.append(element("p", "", `Correct answer: ${formatCorrectAnswer(question)}`));
   }
   area.append(element("p", "", question.explanation));
   return area;
@@ -941,7 +1104,7 @@ function beginQuiz(questions) {
   state.quiz.selectedAnswer = "";
   state.quiz.submitted = false;
   state.quiz.lastCorrect = false;
-  state.quiz.questions = questions;
+  state.quiz.questions = questions.map(prepareQuizQuestion);
   state.quiz.correct = 0;
   state.quiz.wrong = 0;
   state.quiz.wrongItems = [];
@@ -962,13 +1125,17 @@ function resetQuiz() {
 }
 
 function submitAnswer() {
-  if (state.quiz.submitted || !hasSelectedAnswer()) {
+  const question = currentQuestion();
+  if (state.quiz.submitted || (question.type !== "write-code" && !hasSelectedAnswer())) {
     return;
   }
-  const question = currentQuestion();
   const correct = isAnswerCorrect(question, state.quiz.selectedAnswer);
   state.quiz.submitted = true;
   state.quiz.lastCorrect = correct;
+  if (question.type === "write-code" && !correct) {
+    refreshQuiz();
+    return;
+  }
   if (correct) {
     state.quiz.correct += 1;
   } else {
@@ -1045,6 +1212,9 @@ function hasSelectedAnswer() {
 }
 
 function isAnswerCorrect(question, answer) {
+  if (question.type === "write-code") {
+    return normalizeCodeAnswer(answer) === normalizeCodeAnswer(expectedAnswerFor(question));
+  }
   if (typeof question.answer === "boolean") {
     return String(question.answer) === String(answer);
   }
@@ -1056,8 +1226,44 @@ function normalizeAnswer(value) {
   return String(value).trim().toLowerCase();
 }
 
+function normalizeCodeAnswer(value) {
+  return String(value)
+    .trim()
+    .replace(/;+\s*$/, "")
+    .replace(/\s+/g, " ")
+    .toLowerCase();
+}
+
 function formatAnswer(answer) {
   return typeof answer === "boolean" ? (answer ? "True" : "False") : answer;
+}
+
+function expectedAnswerFor(question) {
+  return question.expectedAnswer || question.answer;
+}
+
+function formatCorrectAnswer(question) {
+  if (question.type === "write-code") {
+    return expectedAnswerFor(question);
+  }
+  if (!Array.isArray(question.choices)) {
+    return formatAnswer(question.answer);
+  }
+  const correctIndex = question.choices.findIndex((choice) => normalizeAnswer(choice) === normalizeAnswer(question.answer));
+  if (correctIndex < 0) {
+    return formatAnswer(question.answer);
+  }
+  return `${String.fromCharCode(65 + correctIndex)}. ${formatAnswer(question.answer)}`;
+}
+
+function prepareQuizQuestion(question) {
+  if (!Array.isArray(question.choices)) {
+    return { ...question };
+  }
+  return {
+    ...question,
+    choices: shuffle(question.choices)
+  };
 }
 
 function quizCategories() {

@@ -34,7 +34,8 @@ body {
 
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
 }
 
@@ -598,7 +599,8 @@ pre {
 }
 
 .quiz-field select,
-.blank-input {
+.blank-input,
+.code-answer-input {
   width: 100%;
   min-height: 42px;
   padding: 8px 10px;
@@ -609,8 +611,17 @@ pre {
   outline: none;
 }
 
+.code-answer-input {
+  min-height: 180px;
+  resize: vertical;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
 .quiz-field select:focus,
-.blank-input:focus {
+.blank-input:focus,
+.code-answer-input:focus {
   border-color: var(--accent);
 }
 
@@ -668,6 +679,10 @@ pre {
 }
 
 .answer-choice {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
   width: 100%;
   padding: 13px 15px;
   color: var(--text);
@@ -692,6 +707,15 @@ pre {
 
 .answer-choice:disabled {
   cursor: default;
+}
+
+.answer-letter {
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.answer-text {
+  min-width: 0;
 }
 
 .feedback-area {
@@ -722,6 +746,11 @@ pre {
 .feedback-area.is-wrong {
   background: rgba(196, 116, 103, 0.12);
   border: 1px solid rgba(196, 116, 103, 0.34);
+}
+
+.feedback-area.is-review {
+  background: rgba(212, 163, 95, 0.11);
+  border: 1px solid rgba(212, 163, 95, 0.34);
 }
 
 .stat-line {
@@ -1018,7 +1047,8 @@ pre {
   .answer-choice,
   .quiz-button,
   .quiz-field select,
-  .blank-input {
+  .blank-input,
+  .code-answer-input {
     min-height: 44px;
   }
 }
