@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Database Finals Study Desk</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="primary-sidebar" aria-label="Primary navigation">
+        <div class="brand-block">
+          <p class="eyebrow">Database Finals</p>
+          <h1>Study Desk</h1>
+        </div>
+
+        <nav class="page-tabs" aria-label="Pages">
+          <button class="page-tab is-active" type="button" data-page="roadmap">Roadmap</button>
+          <button class="page-tab" type="button" data-page="labs">Lab Manuals</button>
+          <button class="page-tab" type="button" data-page="chapters">Theory Chapters</button>
+          <button class="page-tab" type="button" data-page="quiz">Exam Quiz</button>
+        </nav>
+
+      </aside>
+
+      <main class="content-frame">
+        <div class="top-strip">
+          <div>
+            <p class="eyebrow">One sitting review</p>
+            <p id="page-summary">Clickable exam roadmap, lab SQL, and theory cram notes.</p>
+          </div>
+          <div class="source-pill">Source locked: local study data</div>
+        </div>
+
+        <section id="view" class="view is-entering" aria-live="polite">
+          <div class="loading-card">
+            <p class="eyebrow">Loading</p>
+            <h2>Preparing study material...</h2>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="studyData.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
